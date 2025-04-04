@@ -261,11 +261,11 @@
     <script>
         document.addEventListener("DOMContentLoaded", loadSongs);
     
-        let currentSongIndex = null; // Variabile per tenere traccia dell'indice della canzone da eliminare/modificare
+        let currentSongIndex = null;
         let scrollIntervalId = null;
         let scrollSpeed = 1; // Velocità di scorrimento (1 è la base)
-        const scrollStep = 1; // Quantità di pixel da scorrere ad ogni intervallo (reso più piccolo)
-        const scrollDelay = 50; // Intervallo in millisecondi (aumentato per rallentare)
+        const scrollStep = 0.5; // Quantità di pixel da scorrere ad ogni intervallo (ancora più piccolo)
+        const scrollDelay = 100; // Intervallo in millisecondi (aumentato ulteriormente)
     
         function loadSongs() {
             // ... (il tuo codice loadSongs) ...
@@ -284,7 +284,7 @@
         }
     
         function increaseScrollSpeed() {
-            scrollSpeed = Math.min(scrollSpeed + 1, 5); // Aumenta la velocità massima a 5
+            scrollSpeed = Math.min(scrollSpeed + 0.5, 5); // Aumenta la velocità di 0.5
             updateVelocityButton();
             if (scrollIntervalId) {
                 startAutoScroll(Math.sign(1));
@@ -294,7 +294,7 @@
         }
     
         function decreaseScrollSpeed() {
-            scrollSpeed = Math.max(scrollSpeed - 1, 1); // Diminuisci la velocità minima a 1
+            scrollSpeed = Math.max(scrollSpeed - 0.5, 1); // Diminuisci la velocità di 0.5
             updateVelocityButton();
             if (scrollIntervalId) {
                 startAutoScroll(Math.sign(1));
@@ -313,7 +313,7 @@
         function updateVelocityButton() {
             const velocityButton = document.querySelector('#scrollControlsContainer button:disabled');
             if (velocityButton) {
-                velocityButton.textContent = `Velocità: ${scrollSpeed}`;
+                velocityButton.textContent = `Velocità: ${scrollSpeed.toFixed(1)}`; // Mostra una cifra decimale
             }
         }
     
