@@ -264,44 +264,15 @@
         let currentSongIndex = null; // Variabile per tenere traccia dell'indice della canzone da eliminare/modificare
         let scrollIntervalId = null;
         let scrollSpeed = 1; // Velocità di scorrimento (1 è la base)
-        const scrollStep = 2; // Quantità di pixel da scorrere ad ogni intervallo
+        const scrollStep = 1; // Quantità di pixel da scorrere ad ogni intervallo (reso più piccolo)
+        const scrollDelay = 50; // Intervallo in millisecondi (aumentato per rallentare)
     
         function loadSongs() {
-            const songs = JSON.parse(localStorage.getItem('songs')) || [];
-            const songList = document.getElementById('songList');
-            songList.innerHTML = '';
-    
-            songs.forEach((song, index) => {
-                const listItem = document.createElement('li');
-                listItem.innerHTML = `
-                    <div class="song-info">
-                        <h3>${song.title}</h3>
-                        <p><strong>Artista:</strong> ${song.artist}</p>
-                    </div>
-                    <div class="song-actions">
-                        <button class="edit" onclick="event.stopPropagation(); openEditModal(${index})">✏️</button>
-                        <button class="delete" onclick="event.stopPropagation(); openDeleteConfirmationModal(${index})">🗑️</button>
-                    </div>
-                `;
-                listItem.addEventListener('click', () => showAccords(song.chords));
-                songList.appendChild(listItem);
-            });
+            // ... (il tuo codice loadSongs) ...
         }
     
         function showAccords(accords) {
-            const modal = document.getElementById('accordModal');
-            const modalAccords = document.getElementById('modalAccords');
-            modalAccords.textContent = accords || 'Nessun accordo inserito.';
-            modal.style.display = 'flex';
-            stopAutoScroll(); // Assicurati che lo scorrimento automatico sia fermo all'apertura
-            // Mostra i controlli di scorrimento solo se il contenuto è lungo
-            const modalContent = document.querySelector('#accordModal .modal-content');
-            const scrollControlsContainer = document.getElementById('scrollControlsContainer');
-            if (modalContent.scrollHeight > modalContent.clientHeight) {
-                scrollControlsContainer.style.display = 'flex';
-            } else {
-                scrollControlsContainer.style.display = 'none';
-            }
+            // ... (il tuo codice showAccords) ...
         }
     
         function startAutoScroll(direction) {
@@ -309,16 +280,16 @@
             const modalContent = document.querySelector('#accordModal .modal-content');
             scrollIntervalId = setInterval(() => {
                 modalContent.scrollTop += scrollStep * scrollSpeed * direction;
-            }, 30); // Intervallo in millisecondi (più basso è più veloce)
+            }, scrollDelay); // Usa il nuovo ritardo
         }
     
         function increaseScrollSpeed() {
             scrollSpeed = Math.min(scrollSpeed + 1, 5); // Aumenta la velocità massima a 5
             updateVelocityButton();
             if (scrollIntervalId) {
-                startAutoScroll(Math.sign(1)); // Riavvia con la nuova velocità verso il basso
+                startAutoScroll(Math.sign(1));
             } else if (document.getElementById('accordModal').style.display === 'flex') {
-                startAutoScroll(1); // Avvia se il modal è aperto ma lo scorrimento non attivo
+                startAutoScroll(1);
             }
         }
     
@@ -326,9 +297,9 @@
             scrollSpeed = Math.max(scrollSpeed - 1, 1); // Diminuisci la velocità minima a 1
             updateVelocityButton();
             if (scrollIntervalId) {
-                startAutoScroll(Math.sign(1)); // Riavvia con la nuova velocità verso il basso
+                startAutoScroll(Math.sign(1));
             } else if (document.getElementById('accordModal').style.display === 'flex') {
-                startAutoScroll(1); // Avvia se il modal è aperto ma lo scorrimento non attivo
+                startAutoScroll(1);
             }
         }
     
@@ -347,72 +318,14 @@
         }
     
         function closeAccordModal() {
-            const modal = document.getElementById('accordModal');
-            modal.style.display = 'none';
-            stopAutoScroll(); // Ferma lo scorrimento quando si chiude il modal
+            // ... (il tuo codice closeAccordModal) ...
         }
     
         function goBack() {
             window.location.href = '/accordicanzoni/index.html';
         }
     
-        function openEditModal(index) {
-            currentSongIndex = index;
-            const songs = JSON.parse(localStorage.getItem('songs')) || [];
-            const song = songs[index];
-            document.getElementById('editSongTitle').value = song.title;
-            document.getElementById('editArtistName').value = song.artist;
-            document.getElementById('editChords').value = song.chords;
-            document.getElementById('editModal').style.display = 'flex';
-        }
-    
-        function closeEditModal() {
-            document.getElementById('editModal').style.display = 'none';
-            currentSongIndex = null;
-        }
-    
-        function saveEditedSong() {
-            if (currentSongIndex !== null) {
-                const songs = JSON.parse(localStorage.getItem('songs')) || [];
-                songs[currentSongIndex].title = document.getElementById('editSongTitle').value.trim();
-                songs[currentSongIndex].artist = document.getElementById('editArtistName').value.trim();
-                songs[currentSongIndex].chords = document.getElementById('editChords').value.trim();
-                localStorage.setItem('songs', JSON.stringify(songs));
-                closeEditModal();
-                loadSongs(); // Ricarica la lista per mostrare le modifiche
-                showSaveMessage("Canzone modificata!");
-            }
-        }
-    
-        function openDeleteConfirmationModal(index) {
-            currentSongIndex = index;
-            document.getElementById('deleteConfirmationModal').style.display = 'flex';
-        }
-    
-        function closeDeleteModal() {
-            document.getElementById('deleteConfirmationModal').style.display = 'none';
-            currentSongIndex = null;
-        }
-    
-        function confirmDeleteSong() {
-            if (currentSongIndex !== null) {
-                const songs = JSON.parse(localStorage.getItem('songs')) || [];
-                songs.splice(currentSongIndex, 1);
-                localStorage.setItem('songs', JSON.stringify(songs));
-                closeDeleteModal();
-                loadSongs(); // Ricarica la lista dopo l'eliminazione
-                showSaveMessage("Canzone eliminata!");
-            }
-        }
-    
-        function showSaveMessage(message) {
-            const saveMessage = document.getElementById('saveMessage');
-            saveMessage.innerHTML = `<p>${message}</p>`;
-            saveMessage.style.display = 'block';
-            setTimeout(() => {
-                saveMessage.style.display = 'none';
-            }, 3000);
-        }
+        // ... (le tue altre funzioni) ...
     
         updateVelocityButton(); // Inizializza il testo del bottone di velocità
     </script>
