@@ -39,6 +39,8 @@ h1 {
     border: 2px solid #e67e22;
     background-color: #282828;
     color: #ecf0f1;
+    width: 100%; /* Prova a farla occupare tutta la larghezza del form */
+    min-height: 150px;
 }
 
 .form button {

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Lista Canzoni</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="/accordicanzoni/styles.css">
     <style>
         body {
             font-family: 'Roboto', sans-serif;
@@ -91,7 +91,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
+            background-color: rgba(0, 0, 0, 0.8); /* Sfondo più scuro per l'intero schermo */
             justify-content: center;
             align-items: center;
             z-index: 1000;
@@ -104,17 +104,23 @@
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
             position: relative;
+            width: 90%; /* Occupare quasi tutta la larghezza */
+            max-height: 90%; /* Occupare quasi tutta l'altezza */
+            overflow: auto; /* Aggiunge la barra di scorrimento se il contenuto è troppo lungo */
+            display: flex;
+            flex-direction: column; /* Per posizionare i pulsanti sotto gli accordi */
         }
 
         .modal-content h2 {
             margin-top: 0;
             color: #f39c12;
             margin-bottom: 10px;
+            text-align: center;
         }
 
-        .modal-content p {
-            margin-bottom: 15px;
-            white-space: pre-wrap; /* Preserve line breaks in accords */
+        #modalAccords {
+            margin-bottom: 20px; /* Spazio per i pulsanti */
+            white-space: pre-wrap;
         }
 
         .close-button {
@@ -148,6 +154,28 @@
         .home-button:hover {
             background-color: #d35400;
         }
+
+        .scroll-controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .scroll-controls button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            background-color: #e67e22;
+            color: #fff;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+        }
+
+        .scroll-controls button:hover {
+            background-color: #d35400;
+        }
     </style>
 </head>
 <body>
@@ -162,6 +190,12 @@
         <div class="modal-content">
             <h2>Accordi</h2>
             <p id="modalAccords"></p>
+            <div class="scroll-controls">
+                <button onclick="decreaseScrollSpeed()">- Velocità</button>
+                <button onclick="startAutoScroll(1)">Scorrimento Automatico</button>
+                <button onclick="increaseScrollSpeed()">+ Velocità</button>
+                <button onclick="stopAutoScroll()">Stop</button>
+            </div>
             <button class="close-button" onclick="closeAccordModal()">×</button>
         </div>
     </div>
@@ -190,11 +224,14 @@
         </div>
     </div>
 
-    <script src="app.js"></script>
+    <script src="/accordicanzoni/app.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", loadSongs);
 
         let currentSongIndex = null; // Variabile per tenere traccia dell'indice della canzone da eliminare/modificare
+        let scrollIntervalId = null;
+        let scrollSpeed = 1; // Velocità di scorrimento (1 è la base)
+        const scrollStep = 2; // Quantità di pixel da scorrere ad ogni intervallo
 
         function loadSongs() {
             const songs = JSON.parse(localStorage.getItem('songs')) || [];
@@ -223,15 +260,49 @@
             const modalAccords = document.getElementById('modalAccords');
             modalAccords.textContent = accords || 'Nessun accordo inserito.';
             modal.style.display = 'flex';
+            stopAutoScroll(); // Assicurati che lo scorrimento automatico sia fermo all'apertura
+        }
+
+        function startAutoScroll(direction) {
+            stopAutoScroll();
+            const modalContent = document.querySelector('#accordModal .modal-content');
+            scrollIntervalId = setInterval(() => {
+                modalContent.scrollTop += scrollStep * scrollSpeed * direction;
+            }, 30); // Intervallo in millisecondi (più basso è più veloce)
+        }
+
+        function increaseScrollSpeed() {
+            scrollSpeed = Math.min(scrollSpeed + 1, 5); // Aumenta la velocità massima a 5
+            if (scrollIntervalId) {
+                startAutoScroll(Math.sign(1)); // Riavvia con la nuova velocità verso il basso
+            } else if (document.getElementById('accordModal').style.display === 'flex') {
+                startAutoScroll(1); // Avvia se il modal è aperto ma lo scorrimento non attivo
+            }
+        }
+
+        function decreaseScrollSpeed() {
+            scrollSpeed = Math.max(scrollSpeed - 1, 1); // Diminuisci la velocità minima a 1
+            if (scrollIntervalId) {
+                startAutoScroll(Math.sign(1)); // Riavvia con la nuova velocità verso il basso
+            } else if (document.getElementById('accordModal').style.display === 'flex') {
+                startAutoScroll(1); // Avvia se il modal è aperto ma lo scorrimento non attivo
+            }
+        }
+
+        function stopAutoScroll() {
+            clearInterval(scrollIntervalId);
+            scrollIntervalId = null;
+            scrollSpeed = 1; // Resetta la velocità
         }
 
         function closeAccordModal() {
             const modal = document.getElementById('accordModal');
             modal.style.display = 'none';
+            stopAutoScroll(); // Ferma lo scorrimento quando si chiude il modal
         }
 
         function goBack() {
-            window.location.href = 'index.html';
+            window.location.href = '/accordicanzoni/index.html';
         }
 
         function openEditModal(index) {
