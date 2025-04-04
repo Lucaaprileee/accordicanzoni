@@ -1,0 +1,21 @@
+{
+    "name": "Accordi Canzoni",
+    "short_name": "Canzoni",
+    "description": "App per salvare gli accordi delle canzoni.",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#3498db",
+    "icons": [
+      {
+        "src": "icon.png",
+        "sizes": "180x180",
+        "type": "image/png"
+      },
+      {
+        "src": "icon-512.png",
+        "sizes": "512x512",
+        "type": "image/png"
+      }
+    ]
+}
