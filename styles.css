@@ -33,12 +33,20 @@ h1 {
     margin-bottom: 20px;
 }
 
+.form textarea, #modalAccords {
+    font-family: monospace, sans-serif; /* 'monospace' è la chiave */
+}
+
 .form input, .form textarea {
     padding: 15px;
     border-radius: 10px;
     border: 2px solid #e67e22;
     background-color: #282828;
     color: #ecf0f1;
+    font-size: 1em; /* Ripristina la dimensione del testo */
+    min-height: 100px;
+    white-space: nowrap; /* Impedisce l'andata a capo automatica */
+    overflow-x: auto; 
 }
 
 .form button {

@@ -103,6 +103,11 @@
     
         .modal-content {
             background-color: #333;
+            font-size: 0.7em;
+            min-height: 100px;
+            white-space: nowrap; /* Impedisce l'andata a capo automatica */
+            overflow-x: auto; 
+            font-family: monospace, sans-serif; 
             color: #fff;
             padding: 20px;
             border-radius: 8px;
@@ -110,7 +115,6 @@
             position: relative;
             width: 90%; /* Occupare quasi tutta la larghezza */
             max-height: 90%; /* Occupare quasi tutta l'altezza */
-            overflow: auto; /* Aggiunge la barra di scorrimento se il contenuto è troppo lungo */
             display: flex;
             flex-direction: column; /* Per posizionare i pulsanti sotto gli accordi */
         }
