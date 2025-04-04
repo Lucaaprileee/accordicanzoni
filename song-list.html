@@ -16,23 +16,23 @@
             flex-direction: column;
             min-height: 100vh; /* Ensure full viewport height */
         }
-
+    
         .container {
             flex-grow: 1; /* Allow container to take up available vertical space */
             padding: 20px;
         }
-
+    
         h1 {
             text-align: center;
             color: #e67e22;
             margin-bottom: 20px;
         }
-
+    
         #songList {
             list-style: none;
             padding: 0;
         }
-
+    
         #songList li {
             display: flex;
             justify-content: space-between;
@@ -44,31 +44,31 @@
             cursor: pointer;
             transition: background-color 0.3s ease;
         }
-
+    
         #songList li:hover {
             background-color: #333;
         }
-
+    
         .song-info {
             flex-grow: 1;
         }
-
+    
         .song-info h3 {
             margin-top: 0;
             margin-bottom: 5px;
             color: #f39c12;
         }
-
+    
         .song-info p {
             margin-bottom: 0;
             color: #ddd;
         }
-
+    
         .song-actions {
             display: flex;
             gap: 10px;
         }
-
+    
         .song-actions button {
             background: none;
             border: none;
@@ -79,11 +79,11 @@
             border-radius: 5px;
             transition: background-color 0.3s ease;
         }
-
+    
         .song-actions button:hover {
             background-color: rgba(230, 126, 34, 0.1);
         }
-
+    
         .modal {
             display: none;
             position: fixed;
@@ -96,7 +96,7 @@
             align-items: center;
             z-index: 1000;
         }
-
+    
         .modal-content {
             background-color: #333;
             color: #fff;
@@ -110,18 +110,18 @@
             display: flex;
             flex-direction: column; /* Per posizionare i pulsanti sotto gli accordi */
         }
-
+    
         .modal-content h2 {
             margin-top: 0;
             color: #f39c12;
             margin-bottom: 10px;
             text-align: center;
         }
-
+    
         #modalAccords {
             white-space: pre-wrap;
         }
-
+    
         .close-button {
             position: absolute;
             top: 10px;
@@ -132,11 +132,11 @@
             font-size: 1.5em;
             cursor: pointer;
         }
-
+    
         .close-button:hover {
             color: #fff;
         }
-
+    
         .home-button {
             background-color: #e67e22;
             color: #fff;
@@ -149,18 +149,18 @@
             margin-top: 20px;
             align-self: center; /* Center the button */
         }
-
+    
         .home-button:hover {
             background-color: #d35400;
         }
-
+    
         .scroll-controls {
             display: flex;
             justify-content: center;
             gap: 5px; /* Ridotto il gap */
-            margin-bottom: 10px; /* Spostato in alto e ridotto il margine */
+            margin-bottom: 10px; /* Spostato in basso e ridotto il margine */
         }
-
+    
         .scroll-controls button {
             padding: 5px 10px; /* Resi più piccoli */
             border: none;
@@ -173,11 +173,11 @@
             min-width: 30px; /* Imposta una larghezza minima per i bottoni */
             text-align: center; /* Assicura che il testo sia centrato */
         }
-
+    
         .scroll-controls button:hover {
             background-color: #d35400;
         }
-
+    
         #editModal .modal-content input[type="text"],
         #editModal .modal-content textarea {
             width: calc(100% - 20px); /* Considera il padding */
@@ -190,17 +190,17 @@
             box-sizing: border-box;
             font-size: 0.9em; /* Ridotta la dimensione del testo */
         }
-
+    
         #editModal .modal-content h2 {
             font-size: 1.2em; /* Ridotta la dimensione del titolo */
             margin-bottom: 10px;
         }
-
+    
         #editModal .modal-buttons button {
             padding: 8px 12px; /* Resi più piccoli */
             font-size: 0.9em;
         }
-
+    
         #scrollControlsContainer {
             display: none; /* Inizialmente nascosto */
             position: sticky;
@@ -223,7 +223,7 @@
         <div class="modal-content">
             <div id="scrollControlsContainer" class="scroll-controls">
                 <button onclick="decreaseScrollSpeed()">-</button>
-                <button disabled>Velocità: 1.0</button>
+                <button disabled>Velocità</button>
                 <button onclick="increaseScrollSpeed()">+</button>
                 <button onclick="stopAutoScroll()">Stop</button>
             </div>
@@ -264,8 +264,7 @@
         let currentSongIndex = null; // Variabile per tenere traccia dell'indice della canzone da eliminare/modificare
         let scrollIntervalId = null;
         let scrollSpeed = 1; // Velocità di scorrimento (1 è la base)
-        const scrollStep = 0.7; // Quantità di pixel da scorrere ad ogni intervallo (ancora più piccolo)
-        const scrollDelay = 150; // Intervallo in millisecondi (aumentato ulteriormente)
+        const scrollStep = 2; // Quantità di pixel da scorrere ad ogni intervallo
 
         function loadSongs() {
             const songs = JSON.parse(localStorage.getItem('songs')) || [];
@@ -295,14 +294,6 @@
             modalAccords.textContent = accords || 'Nessun accordo inserito.';
             modal.style.display = 'flex';
             stopAutoScroll(); // Assicurati che lo scorrimento automatico sia fermo all'apertura
-            // Mostra i controlli di scorrimento solo se il contenuto è lungo
-            const modalContent = document.querySelector('#accordModal .modal-content');
-            const scrollControlsContainer = document.getElementById('scrollControlsContainer');
-            if (modalContent.scrollHeight > modalContent.clientHeight) {
-                scrollControlsContainer.style.display = 'flex';
-            } else {
-                scrollControlsContainer.style.display = 'none';
-            }
         }
 
         function startAutoScroll(direction) {
@@ -310,26 +301,24 @@
             const modalContent = document.querySelector('#accordModal .modal-content');
             scrollIntervalId = setInterval(() => {
                 modalContent.scrollTop += scrollStep * scrollSpeed * direction;
-            }, scrollDelay); // Usa il nuovo ritardo
+            }, 30); // Intervallo in millisecondi (più basso è più veloce)
         }
 
         function increaseScrollSpeed() {
-            scrollSpeed = Math.min(scrollSpeed + 0.3, 5); // Aumenta la velocità di 0.3
-            updateVelocityButton();
+            scrollSpeed = Math.min(scrollSpeed + 1, 5); // Aumenta la velocità massima a 5
             if (scrollIntervalId) {
-                startAutoScroll(Math.sign(1));
+                startAutoScroll(Math.sign(1)); // Riavvia con la nuova velocità verso il basso
             } else if (document.getElementById('accordModal').style.display === 'flex') {
-                startAutoScroll(1);
+                startAutoScroll(1); // Avvia se il modal è aperto ma lo scorrimento non attivo
             }
         }
 
         function decreaseScrollSpeed() {
-            scrollSpeed = Math.max(scrollSpeed - 0.3, 0.3); // Diminuisci la velocità di 0.3 (minimo 0.3 per non fermarsi subito)
-            updateVelocityButton();
+            scrollSpeed = Math.max(scrollSpeed - 1, 1); // Diminuisci la velocità minima a 1
             if (scrollIntervalId) {
-                startAutoScroll(Math.sign(1));
+                startAutoScroll(Math.sign(1)); // Riavvia con la nuova velocità verso il basso
             } else if (document.getElementById('accordModal').style.display === 'flex') {
-                startAutoScroll(1);
+                startAutoScroll(1); // Avvia se il modal è aperto ma lo scorrimento non attivo
             }
         }
 
@@ -337,14 +326,6 @@
             clearInterval(scrollIntervalId);
             scrollIntervalId = null;
             scrollSpeed = 1; // Resetta la velocità
-            updateVelocityButton();
-        }
-
-        function updateVelocityButton() {
-            const velocityButton = document.querySelector('#scrollControlsContainer button:disabled');
-            if (velocityButton) {
-                velocityButton.textContent = `Velocità: ${scrollSpeed.toFixed(1)}`; // Mostra una cifra decimale
-            }
         }
 
         function closeAccordModal() {
@@ -414,8 +395,6 @@
                 saveMessage.style.display = 'none';
             }, 3000);
         }
-
-        updateVelocityButton(); // Inizializza il testo del bottone di velocità
     </script>
 </body>
 </html>
