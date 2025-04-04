@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Lista Canzoni</title>
     <link rel="stylesheet" href="/accordicanzoni/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
         body {
             font-family: 'Roboto', sans-serif;
@@ -16,6 +17,77 @@
             flex-direction: column;
             min-height: 100vh; /* Ensure full viewport height */
         }
+
+        .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    .home-button {
+        background: none; /* Rimuovi lo sfondo del bottone */
+        border: none; /* Rimuovi il bordo del bottone */
+        color: #e67e22;
+        cursor: pointer;
+        font-size: 1.5em; /* Aumenta la dimensione dell'icona */
+        padding: 0; /* Rimuovi il padding predefinito */
+        margin-right: 10px; /* Spazio a destra dell'icona home */
+    }
+
+    .home-button:hover {
+        color: #d35400;
+    }
+
+    .filter-icon {
+        position: relative; /* Per posizionare il contenitore del filtro in modo assoluto al suo interno */
+    }
+
+    .filter-icon button {
+        background: none;
+        border: none;
+        color: #e67e22;
+        cursor: pointer;
+        font-size: 1.5em; /* Aumenta la dimensione dell'icona */
+        padding: 0;
+        margin-left: 10px; /* Spazio a sinistra dell'icona filtro */
+    }
+
+    .filter-icon button:hover {
+        color: #d35400;
+    }
+
+    .filter-container {
+        display: none; /* Inizialmente nascosto */
+        position: absolute;
+        top: 100%; /* Posiziona sotto l'icona */
+        right: 0;
+        width: 100px;
+        background-color: #333;
+        color: #ddd;
+        padding: 10px;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        z-index: 10; /* Assicura che sia sopra gli altri elementi */
+        flex-direction: column; /* Imposta la direzione a colonna per label e select */
+        align-items: flex-start; /* Allinea gli elementi a sinistra */
+        gap: 5px; /* Spazio tra label e select */
+    }
+
+    .filter-container label {
+        margin: 0; /* Rimuovi il margine predefinito della label */
+    }
+
+    .filter-container select {
+        padding: 8px;
+        border-radius: 5px;
+        border: 1px solid #555;
+        background-color: #282828;
+        color: #ecf0f1;
+        width: 100%; /* Fai in modo che la select occupi tutta la larghezza del contenitore */
+        box-sizing: border-box; /* Includi padding e bordo nella larghezza */
+    }
+
     
         .container {
             flex-grow: 1; /* Allow container to take up available vertical space */
@@ -221,10 +293,27 @@
 </head>
 <body>
     <div class="container">
-        <h1>Lista Canzoni</h1>
+        <div class="header">
+            <button class="home-button" onclick="goBack()">
+                <i class="fas fa-home"></i>
+            </button>
+            <h1>Lista Canzoni</h1>
+            <div class="filter-icon">
+                <button onclick="toggleFilterOptions()">
+                    <i class="fas fa-filter"></i>
+                </button>
+                <div id="filterOptions" class="filter-container">
+                    <label for="sortOption">Ordina per:</label>
+                    <select id="sortOption" onchange="sortSongs()">
+                        <option value="title">Titolo</option>
+                        <option value="artist">Artista</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
         <ul id="songList">
-            </ul>
-        <button class="home-button" onclick="goBack()">Torna alla Home</button>
+        </ul>
     </div>
 
     <div id="accordModal" class="modal">
@@ -403,6 +492,11 @@
                 saveMessage.style.display = 'none';
             }, 3000);
         }
+
+        function toggleFilterOptions() {
+        const filterOptions = document.getElementById('filterOptions');
+        filterOptions.style.display = filterOptions.style.display === 'flex' ? 'none' : 'flex';
+    }
     </script>
 </body>
 </html>
