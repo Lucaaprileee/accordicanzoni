@@ -242,6 +242,16 @@
     transform: scale(1.1);
 }
 
+.search{
+    padding: 0;
+    margin-bottom: 16px;
+    text-align: center;
+}
+input[type=text] {
+  border: none;
+  font-size: 17px;
+  border-radius: 10px;
+}
 
     </style>
 </head>
@@ -255,35 +265,45 @@
 
     <div class="container">
         <h1>Lista Canzoni</h1>
-    
+        
+        <div class="search">
+            <input type="text" placeholder="Cerca canzoni...">
+        </div>
+
         <!-- Menu di ordinamento -->
         <div class="sort-container">
             <label for="sortSelect">Ordina per:</label>
             <select id="sortSelect" onchange="sortSongs()">
-                <option value="default">Ordine di salvataggio</option>
                 <option value="title">Titolo (A-Z)</option>
                 <option value="artist">Artista (A-Z)</option>
             </select>
         </div>
     
         <!-- Lista canzoni -->
-        <ul id="songList"></u>
+        <ul id="songList"></ul>
+
+        <div id="noResults" style="display: none; text-align: center; margin-top: 20px;">
+            <p style="font-size: 1.2em;">Non c'è la tua canzone?</p>
+            <a href="index.html">
+                <button style="padding: 10px 20px; font-size: 1em; cursor: pointer;">Aggiungila!</button>
+            </a>
+        </div>
+        
     </div>
     
-
-    <div id="accordModal" class="modal">
-        <div class="modal-content">
-            <div id="scrollControlsContainer" class="scroll-controls">
-                <button onclick="decreaseScrollSpeed()">-</button>
-                <button disabled>Velocità</button>
-                <button onclick="increaseScrollSpeed()">+</button>
-                <button onclick="stopAutoScroll()">Stop</button>
-            </div>
-            <h2>Accordi</h2>
-            <p id="modalAccords"></p>
-            <button class="close-button" onclick="closeAccordModal()">×</button>
+<div id="accordModal" class="modal">
+    <div class="modal-content">
+        <div id="scrollControlsContainer" class="scroll-controls">
+            <button onclick="decreaseScrollSpeed()">-</button>
+            <button disabled>Velocità</button>
+            <button onclick="increaseScrollSpeed()">+</button>
+            <button onclick="stopAutoScroll()">Stop</button>
         </div>
+        <h2>Accordi</h2>
+        <p id="modalAccords"></p>
+        <button class="close-button" onclick="closeAccordModal()">×</button>
     </div>
+</div>
 
     <div id="editModal" class="modal">
         <div class="modal-content">
@@ -452,7 +472,7 @@
     const select = document.getElementById('sortSelect');
     const value = select.value;
 
-    let songs = JSON.parse(localStorage.getItem('songs')) || [];
+    const songs = JSON.parse(localStorage.getItem('songs')) || [];
 
     if (value === 'title') {
         songs.sort((a, b) => a.title.localeCompare(b.title));
@@ -461,8 +481,33 @@
     }
 
     localStorage.setItem('songs', JSON.stringify(songs));
-    loadSongs(); // Ricarica la lista ordinata
+    loadSongs(); // ricarica la lista ordinata
 }
+
+document.querySelector('.search input[type="text"]').addEventListener('input', function () {
+    const searchTerm = this.value.toLowerCase();
+    const listItems = document.querySelectorAll('#songList li');
+    const noResults = document.getElementById('noResults');
+
+    let visibleCount = 0;
+
+    listItems.forEach(item => {
+        const title = item.querySelector('h3').textContent.toLowerCase();
+        const artist = item.querySelector('p').textContent.toLowerCase();
+        const match = title.includes(searchTerm) || artist.includes(searchTerm);
+
+        item.style.display = match ? 'flex' : 'none';
+        if (match) visibleCount++;
+    });
+
+    // Mostra il messaggio e bottone SOLO se l'utente sta cercando qualcosa
+    if (searchTerm !== '') {
+        noResults.style.display = 'block';
+    } else {
+        noResults.style.display = 'none';
+    }
+});
+
 
     </script>
 </body>
